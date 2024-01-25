@@ -100,7 +100,7 @@ autoscaling:
   minReplicas: 2
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
 
 labelselector:
   app1: shop-review1
