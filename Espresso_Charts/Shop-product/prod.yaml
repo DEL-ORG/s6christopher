@@ -1,0 +1,165 @@
+NAME: shop-product
+LAST DEPLOYED: Thu Jan 25 10:45:30 2024
+NAMESPACE: s6christopher
+STATUS: pending-install
+REVISION: 1
+TEST SUITE: None
+HOOKS:
+MANIFEST:
+---
+# Source: shop-product/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name:  shop-product-sva
+  labels:
+    app: shop-product
+    version: v1
+    helm.sh/chart: shop-product-0.1.0
+    app: shop-product
+    version: v1
+    app.kubernetes.io/name: shop-product
+    app.kubernetes.io/instance: shop-product
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: shop-product/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name:  shop-product-secret
+type:  Opaque
+data:
+  username: bXktdXNlcm5hbWU= 
+  password: bXktcGFzc3dvcmQ=
+---
+# Source: shop-product/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shop-product-cm
+data:
+---
+# Source: shop-product/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name:  espresso-shop-product-catalog-svc
+  labels:
+    app: shop-product
+    version: v1
+    helm.sh/chart: shop-product-0.1.0
+    app: shop-product
+    version: v1
+    app.kubernetes.io/name: shop-product
+    app.kubernetes.io/instance: shop-product
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: NodePort
+  ports:
+    - port: 8091
+      targetPort:  80
+      protocol:  TCP
+      name: http
+  selector:
+    app: shop-product
+    version: v1
+    app.kubernetes.io/name: shop-product
+    app.kubernetes.io/instance: shop-product
+---
+# Source: shop-product/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-product
+  labels:
+    app: shop-product
+    version: v1
+    helm.sh/chart: shop-product-0.1.0
+    app: shop-product
+    version: v1
+    app.kubernetes.io/name: shop-product
+    app.kubernetes.io/instance: shop-product
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app: shop-product
+      version: v1
+      app.kubernetes.io/name: shop-product
+      app.kubernetes.io/instance: shop-product
+  template:
+    metadata:
+      labels:
+        app: shop-product
+        version: v1
+        app.kubernetes.io/name: shop-product
+        app.kubernetes.io/instance: shop-product
+    spec:
+      serviceAccountName: shop-product-sva
+      securityContext:
+        {}
+      containers:
+        - name: shop-product
+          securityContext:
+            {}
+          image: "devopseasylearning/espresso-shop-product-catalog:v1.0.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+---
+# Source: shop-product/templates/hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: shop-product
+  labels:
+    app: shop-product
+    version: v1
+    helm.sh/chart: shop-product-0.1.0
+    app: shop-product
+    version: v1
+    app.kubernetes.io/name: shop-product
+    app.kubernetes.io/instance: shop-product
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: shop-product
+  minReplicas: 2
+  maxReplicas: 100
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+            type: Utilization
+            averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+             type: Utilization
+             averageUtilization: 80
+
