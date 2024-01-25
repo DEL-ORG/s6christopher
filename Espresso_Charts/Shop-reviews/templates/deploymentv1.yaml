@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "Shop_reviews.fullname" . }}
+  name: {{ .Values.name1}}
   labels:
-    {{- include "Shop_reviews.labels" . | nindent 4 }}
+     version: {{ .Values.label1.version }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "Shop_reviews.selectorLabels" . | nindent 6 }}
+      version: {{ .Values.labelselector.version1 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "Shop_reviews.selectorLabels" . | nindent 8 }}
+        version: {{ .Values.labelselector.version1 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "Shop_reviews.serviceAccountName" . }}
+      serviceAccountName: {{ .Values.serviceAccount.name1 }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -33,6 +33,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+          - configMapRef:
+              name: shop-review1-cm
           ports:
             - name: http
               containerPort: 80
