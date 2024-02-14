@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: {{ .Values.configmap2.name }}
 data:
-  SERVICE_VERSION = v2
+  SERVICE_VERSION: v2

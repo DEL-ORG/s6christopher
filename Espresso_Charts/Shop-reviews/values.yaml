@@ -1,5 +1,7 @@
-name1: review1
-name2: review2
+name1: shop-review1
+name2: shop-review2
+
+app: s6christopher-espresso-reviews
 
 label1:
   version: v1
@@ -10,10 +12,10 @@ label2:
 replicaCount: 2
 
 image:
-  repository:
+  repository: devopseasylearning/s6-expresso-reviews
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag:
+  tag: "v1.0.0"
 
 configmap1:
   name: shop-review1-cm
