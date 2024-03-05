@@ -1,0 +1,43 @@
+{{- if .Values.server.configEnabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # Mandatory hardcoded name.
+  # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cm.yaml
+  name: argocd-cm
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+    # Mandatory label
+    # Ref: https://argoproj.github.io/argo-cd/operator-manual/declarative-setup/#atomic-configuration
+    app.kubernetes.io/part-of: argocd
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+data:
+   accounts.christopher: apikey, login
+   accounts.christopher.enabled: "true"
+
+   accounts.peter: apikey, login
+   accounts.peter.enabled: "true"
+
+   accounts.confidence: apikey, login
+   accounts.confidence.enabled: "true"
+
+   accounts.raoul: apikey, login
+   accounts.raoul.enabled: "true"
+
+   accounts.prince: apikey, login
+   accounts.prince.enabled: "true"
+
+   accounts.bridget: apikey, login
+   accounts.bridget.enabled: "true"
+
+
+   accounts.s6student: apikey, login
+   accounts.s6student.enabled: "true"
+
+   accounts.admin.enabled: "true"
+{{- end }}
